@@ -10,6 +10,7 @@ drf-spectacular = "*"
 python-dotenv = "==1.0.0"
 pre-commit = "*"
 flake8 = "*"
+djoser = "*"
 
 [dev-packages]
 

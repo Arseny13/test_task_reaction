@@ -18,7 +18,6 @@ repos:
     hooks:
       - id: isort
         exclude: __init__.py
-        args: [ --profile, black, --filter-files ]
 
 # Обновляет синтаксис Python кода в соответствии с последними версиями
 -   repo: https://github.com/asottile/pyupgrade

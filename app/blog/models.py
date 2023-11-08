@@ -29,3 +29,11 @@ class Blog(models.Model):
         'Опубликована ли запись',
         default=False
     )
+
+    def __str__(self) -> str:
+        return self.name
+
+    class Meta:
+        """Класс Meta для Blog описание метаданных."""
+        verbose_name = 'blog'
+        verbose_name_plural = 'blogs'

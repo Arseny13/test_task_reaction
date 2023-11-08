@@ -72,6 +72,5 @@ python manage.py runserver
 * Переключите бд на sqlite
 * Запустите тесты
 ```
-cd app
-python manage.py test
+pytest
 ```

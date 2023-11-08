@@ -17,12 +17,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Blog',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=20, verbose_name='Имя записи')),
                 ('text', models.TextField(max_length=100, verbose_name='Текст')),
-                ('create_date', models.DateField(auto_now_add=True, verbose_name='Дата заказа')),
-                ('publish', models.BooleanField(default=False, verbose_name='Опубликована ли запись')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                ('create_date', models.DateField(
+                    auto_now_add=True, verbose_name='Дата заказа')),
+                ('publish', models.BooleanField(default=False,
+                 verbose_name='Опубликована ли запись')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                 related_name='blogs', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
             ],
         ),
     ]

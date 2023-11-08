@@ -14,7 +14,8 @@ class BlogBaseSerializer(serializers.ModelSerializer):
             'name',
             'text',
             'publish',
-            'user'
+            'user',
+            'create_date'
         )
 
 

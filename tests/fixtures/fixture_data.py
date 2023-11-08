@@ -12,10 +12,10 @@ def blog(user):
 
 
 @pytest.fixture
-def another_blog(user):
+def another_blog(another_user):
     from blog.models import Blog
     return Blog.objects.create(
         name='Блог 2',
         text='Тестовый блог 2',
-        user=user
+        user=another_user
     )

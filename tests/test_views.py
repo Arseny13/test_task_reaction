@@ -5,7 +5,11 @@ from blog.models import Blog
 
 
 class TestBlogAPI:
-    VALID_DATA = {'text': 'Поменяли текст статьи'}
+    VALID_DATA = {
+        'name': 'Поменяли название',
+        'text': 'Поменяли текст',
+        'publish': False
+    }
 
     def test_blog_not_found(self, client, blog):
         response = client.get('/blogs/')
@@ -152,4 +156,79 @@ class TestBlogAPI:
         assert posts_conut == Blog.objects.count(), (
             'Проверьте, что POST-запрос неавторизованного пользователя к '
             '`/blogs/` не создает новый пост.'
+        )
+
+    @pytest.mark.django_db(transaction=True)
+    @pytest.mark.parametrize('http_method', ('put', 'patch'))
+    def test_blog_change_auth_with_valid_data(self, user_client, blog,
+                                              http_method):
+        request_func = getattr(user_client, http_method)
+        response = request_func(f'/blogs/{blog.id}/',
+                                data=self.VALID_DATA)
+        http_method = http_method.upper()
+        assert response.status_code == HTTPStatus.OK, (
+            f'Проверьте, что для авторизованного пользователя {http_method}'
+            '-запрос к `/blogs/{id}/` вернётся ответ со статусом '
+            '200.'
+        )
+
+        test_blog = Blog.objects.filter(id=blog.id).first()
+        assert test_blog, (
+            f'Проверьте, что {http_method}-запрос авторизованного '
+            'пользователя к `/blogs/{id}/` не удаляет редактируемый '
+            'пост.'
+        )
+        assert test_blog.text == self.VALID_DATA['text'], (
+            f'Проверьте, что {http_method}-запрос авторизованного '
+            'пользователя к `/api/v1/posts/{id}/` вносит изменения в блог.'
+        )
+
+    @pytest.mark.django_db(transaction=True)
+    @pytest.mark.parametrize('http_method', ('put', 'patch'))
+    def test_blog_change_not_author_with_valid_data(self, user_client,
+                                                    another_blog, http_method):
+        request_func = getattr(user_client, http_method)
+        response = request_func(f'/blogs/{another_blog.id}/',
+                                data=self.VALID_DATA)
+        http_method = http_method.upper()
+        assert response.status_code == HTTPStatus.FORBIDDEN, (
+            f'Проверьте, что {http_method}'
+            '-запрос авторизованного пользователя к `/blogs/{id}/` '
+            'для чужого поста возвращает ответ со статусом 403.'
+        )
+
+        db_blog = Blog.objects.filter(id=another_blog.id).first()
+        assert db_blog.text != self.VALID_DATA['text'], (
+            f'Проверьте, что {http_method}'
+            '-запрос авторизованного пользователя к `/blogs/{id}/` '
+            'для чужого поста не вносит изменения в пост.'
+        )
+
+    @pytest.mark.django_db(transaction=True)
+    def test_blog_delete_by_author(self, user_client, blog):
+        response = user_client.delete(f'/blogs/{blog.id}/')
+        assert response.status_code == HTTPStatus.NO_CONTENT, (
+            'Проверьте, что для автора поста DELETE-запрос к '
+            ' `/blogs/` возвращает ответ со статусом 204.'
+        )
+
+        test_blog = Blog.objects.filter(id=blog.id).first()
+        assert not test_blog, (
+            'Проверьте, что DELETE-запрос автора поста к '
+            ' `blogs/{id}/` удаляет этот пост.'
+        )
+
+    @pytest.mark.django_db(transaction=True)
+    def test_blog_delete_not_author(self, user_client, another_blog):
+        response = user_client.delete(f'/blogs/{another_blog.id}/')
+        assert response.status_code == HTTPStatus.FORBIDDEN, (
+            'Проверьте, что DELETE-запрос авторизованного пользователя к '
+            '`/blogs/{id}/` чужого поста '
+            'вернёт ответ со статусом 403.'
+        )
+
+        test_blog = Blog.objects.filter(id=another_blog.id).first()
+        assert test_blog, (
+            'Проверьте, что авторизованный пользователь не может удалить '
+            'чужой пост.'
         )

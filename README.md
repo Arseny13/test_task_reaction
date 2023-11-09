@@ -27,7 +27,15 @@ touch .env
 
 ## Запуск проекта
 
-Установить [pipenv](https://pipenv.pypa.io/en/latest/)
+* Создать виртуальное окружение и активировать его
+* Установить зависимости
+```
+sudo apt install python3.10-venv
+python3.10 -m vevn venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Или установить [pipenv](https://pipenv.pypa.io/en/latest/)
 ```
 $ pip install --user pipenv
 ```
@@ -36,6 +44,7 @@ $ pip install --user pipenv
 $ pipenv --version
 pipenv, version 2023.10.24
 ```
+
 * Выбрать какуб бд использовать( в app/app/settings.py найти строчку DATABASES и закоментить нужное)
 
 * Если выбрали postgres, то надо создать базу данных в postgres

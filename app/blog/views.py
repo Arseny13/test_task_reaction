@@ -21,7 +21,7 @@ class BlogList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        """Cоздание блога блога."""
+        """Cоздание блога."""
         context = {
             'request': self.request,
         }
